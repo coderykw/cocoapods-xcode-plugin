@@ -11,7 +11,7 @@ Manage your dependencies, with minimal command line hack-fu
 - Supports using a custom path to your CocoaPods installation
 - Supports `$GEM_HOME` expansion, `$GEM_PATH` expansion, and `rvm` environments
 
-![Menu](https://github.com/kattrali/cocoadocs-xcode-plugin/raw/master/menu.png)
+![Menu](https://github.com/xiongcaichang/cocoapods-xcode-plugin/raw/master/menu.png)
 
 
 ## Prerequisites
@@ -71,7 +71,7 @@ Path expansion and command resolution occurs each time before a command is run. 
 
 Under most circumstances in an `rvm` environment the following custom `GEM_PATH` setting should be used:
 
-![Suitable rvm setting](https://github.com/kattrali/cocoadocs-xcode-plugin/raw/master/menu_rvm.png)
+![Suitable rvm setting](https://github.com/xiongcaichang/cocoapods-xcode-plugin/raw/master/menu_rvm.png)
 
 NOTE: Behind the scenes, the `/bin` path element will be converted to `/wrapper` for rvm. If `.rvm` is not found in the expanded path, the `/bin` path element will remain unmodified.
 
