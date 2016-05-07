@@ -37,6 +37,7 @@
 
 @property (nonatomic, strong) NSMenuItem* updatePodsNoRepoUpdateItem;
 @property (nonatomic, strong) NSMenuItem* installPodsItem;
+@property (nonatomic, strong) NSMenuItem* installPodsWithNoUpdateItem;
 @property (nonatomic, strong) NSMenuItem* outdatedPodsItem;
 @property (nonatomic, strong) NSMenuItem* updatePodsItem;
 @property (nonatomic, strong) NSMenuItem* installDocsItem;
@@ -96,7 +97,7 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
 
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
-    if ([menuItem isEqual:self.installPodsItem] || [menuItem isEqual:self.outdatedPodsItem] || [menuItem isEqual:self.updatePodsItem] || [menuItem isEqual:self.updatePodsNoRepoUpdateItem]) {
+    if ([menuItem isEqual:self.installPodsItem] || [menuItem isEqual:self.outdatedPodsItem] || [menuItem isEqual:self.updatePodsItem] || [menuItem isEqual:self.updatePodsNoRepoUpdateItem]|| [menuItem isEqual:self.installPodsWithNoUpdateItem]) {
         return [[CCPProject projectForKeyWindow] hasPodfile];
     }
 
@@ -118,6 +119,12 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
         self.installPodsItem = [[NSMenuItem alloc] initWithTitle:@"Install Pods"
                                                           action:@selector(integratePods)
                                                    keyEquivalent:@""];
+
+        self.installPodsWithNoUpdateItem = [[NSMenuItem alloc] initWithTitle:@"Install Pods with no update local specs"
+                                                          action:@selector(integratePodsWithNoUpdate)
+                                                   keyEquivalent:@""];
+
+
 
         self.updatePodsNoRepoUpdateItem = [[NSMenuItem alloc] initWithTitle:@"Update Pods (Offline only)"
                                                                      action:@selector(updatePodsNoRepoUpdate)
@@ -154,6 +161,7 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
         [self.updatePodsNoRepoUpdateItem setTarget:self];
         [self.installDocsItem setTarget:self];
         [self.installPodsItem setTarget:self];
+        [self.installPodsWithNoUpdateItem setTarget:self];
         [self.outdatedPodsItem setTarget:self];
         [self.updatePodsItem setTarget:self];
         [createPodfileItem setTarget:self];
@@ -161,6 +169,7 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
         [self.pathItem setTarget:self];
 
         [[cocoaPodsMenu submenu] addItem:self.installPodsItem];
+        [[cocoaPodsMenu submenu] addItem:self.installPodsWithNoUpdateItem];
         [[cocoaPodsMenu submenu] addItem:self.outdatedPodsItem];
         [[cocoaPodsMenu submenu] addItem:self.updatePodsItem];
         [[cocoaPodsMenu submenu] addItem:self.updatePodsNoRepoUpdateItem];
@@ -258,6 +267,50 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
                               }
                          }];
 }
+
+
+
+//----------------cc http://www.xiongcaichang.com  -----------------------------//
+
+- (void)integratePodsWithNoUpdate
+{
+    NSString* const CPFallbackPodPath = @"/usr/local/bin";
+    CCPProject* project = [CCPProject projectForKeyWindow];
+    BOOL isDir;
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:project.workspacePath isDirectory:&isDir];
+    NSString* expandedGemPath = [CCPPathResolver stringByAdjustingGemPathForEnvironment:[self gemPath]];
+    NSString* resolvedCommand = [CCPPathResolver resolveCommand:POD_EXECUTABLE forPath:expandedGemPath];
+
+    if (resolvedCommand == nil) {
+        resolvedCommand = [CCPPathResolver resolveCommand:POD_EXECUTABLE forPath:CPFallbackPodPath];
+        if (resolvedCommand == nil) {
+            NSAlert* alert = [[NSAlert alloc] init];
+            [alert setAlertStyle:NSCriticalAlertStyle];
+            [alert setMessageText:RESOLVER_TITLE_TEXT];
+            [alert setInformativeText:[NSString stringWithFormat:RESOLVER_ERROR_FORMAT, POD_EXECUTABLE, expandedGemPath]];
+            [alert runModal];
+            return;
+        }
+    }
+
+    [CCPShellRunner runShellCommand:resolvedCommand
+                           withArgs:@[ @"install", @"--no-repo-update"]
+                          directory:[CCPWorkspaceManager currentWorkspaceDirectoryPath]
+                         completion:^(NSTask* t) {
+                             if ([self shouldInstallDocsForPods])
+                                 [self installOrUpdateDocSetsForPods];
+                             // Only prompt if this is the first time
+                             if (!fileExists || !isDir) {
+                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                     [self showReopenWorkspaceMessageForProject:project];
+                                 });
+                             }
+                         }];
+}
+
+
+
+//----------------cc http://www.xiongcaichang.com  -----------------------------//
 
 - (void)showReopenWorkspaceMessageForProject:(CCPProject*)project
 {

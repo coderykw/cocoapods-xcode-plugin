@@ -5,6 +5,6 @@ DEPENDENCIES:
   - Kiwi
 
 SPEC CHECKSUMS:
-  Kiwi: f8d704fc3ef7eb0df84abc3aa26c4b4a0773f9a0
+  Kiwi: b8bcdbbbe9b8ca1c9bf42a8ceb4a50d8468cdc7d
 
-COCOAPODS: 0.36.0
+COCOAPODS: 0.39.0

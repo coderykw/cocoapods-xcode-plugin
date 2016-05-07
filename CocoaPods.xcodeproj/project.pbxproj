@@ -252,7 +252,7 @@
 		8A808592178B93C4006E56E3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastTestingUpgradeCheck = 0620;
+				LastTestingUpgradeCheck = 0720;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Delisa Mason";
 				TargetAttributes = {
