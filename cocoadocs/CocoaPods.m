@@ -54,7 +54,7 @@
 static NSString* const DMMCocoaPodsIntegrateWithDocsKey = @"DMMCocoaPodsIntegrateWithDocs";
 static NSString* const DOCSET_ARCHIVE_FORMAT = @"http://cocoadocs.org/docsets/%@/docset.xar";
 static NSString* const GEM_EXECUTABLE = @"gem";
-static NSString* const GEM_PATH_DEFAULT = @"/usr/bin";
+static NSString* const GEM_PATH_DEFAULT = @"/usr/local/bin/";
 static NSString* const GEM_PATH_KEY = @"GEM_PATH_KEY";
 static NSString* const OPEN_EXECUTABLE = @"/usr/bin/open";
 static NSString* const POD_EXECUTABLE = @"pod";
