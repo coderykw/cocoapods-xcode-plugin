@@ -120,6 +120,7 @@ static NSString* const XAR_EXECUTABLE = @"/usr/bin/xar";
                                                           action:@selector(integratePods)
                                                    keyEquivalent:@""];
 
+        //----added
         self.installPodsWithNoUpdateItem = [[NSMenuItem alloc] initWithTitle:@"Install Pods (Offline only)"
                                                           action:@selector(integratePodsWithNoUpdate)
                                                    keyEquivalent:@""];
